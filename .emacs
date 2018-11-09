@@ -11,7 +11,12 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-;; define list of packages to install
+
+
+;; Do not forget to install these packages
+;; apt or pip install jedi autopep8 flake8 ipython importmagic yapf 
+;; 
+;; Define list of packages to install
 (defvar myPackages
   '(better-defaults
     material-theme
@@ -28,9 +33,12 @@
 ;; Use shell's $PATH
 (exec-path-from-shell-copy-env "PATH")
 
-;;elpy by default
+;; Enable elpy and ipython as promt
 (package-initialize)
 (elpy-enable)
+(setq python-shell-interpreter "ipython"
+      python-shell-interpreter-args "-i --simple-prompt")
+
 
 ;;; init-use-package.el ends here(require 'package)
 
@@ -55,6 +63,8 @@
 ;; disable scrollbar-mode
 (scroll-bar-mode -1)
 (menu-bar-mode 1) 
+;; theme
+(load-theme 'material t) 
 
 ;;move between buffers
 (global-set-key (kbd "C-c j ")  'windmove-left)
@@ -66,12 +76,10 @@
 ;; F1 bound to shell whoah
 (global-set-key [f1] 'shell)
 
-
 ;; yaml mode
 ;;(load-file "~/.emacs.d/yaml-mode/yaml-mode.el")
 (require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-
 
 ;;Simple promts
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -114,8 +122,6 @@
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (ido-mode 1)
-
-
 
 ;; ;; -------------------- extra nice things --------------------
 ;; ;; use shift to move around windows
@@ -172,25 +178,25 @@
 ;;(global-linum-mode t) ;; enable line numbers globally
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-term-color-vector
-   [unspecified "#212121" "#f07178" "#c3e88d" "#ffcb6b" "#82aaff" "#c792ea" "#82aaff" "#eeffff"])
- '(custom-enabled-themes (quote (tango-dark)))
- '(custom-safe-themes
-   (quote
-    ("196df8815910c1a3422b5f7c1f45a72edfa851f6a1d672b7b727d9551bb7c7ba" default)))
- '(package-selected-packages
-   (quote
-    (ein sr-speedbar yaml-mode virtualenv use-package-ensure-system-package swiper python-mode py-autopep8 processing-mode powerline platformio-mode paredit nyan-mode melpa-upstream-visit material-theme list-packages-ext irony-eldoc ini-mode helm go-play go-mode flycheck fireplace date-field company-arduino better-defaults base16-theme avy ac-clang ac-capf))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; (custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(ansi-term-color-vector
+;;    [unspecified "#212121" "#f07178" "#c3e88d" "#ffcb6b" "#82aaff" "#c792ea" "#82aaff" "#eeffff"])
+;;  '(custom-enabled-themes (quote (tango-dark)))
+;;  '(custom-safe-themes
+;;    (quote
+;;     ("196df8815910c1a3422b5f7c1f45a72edfa851f6a1d672b7b727d9551bb7c7ba" default)))
+;;  '(package-selected-packages
+;;    (quote
+;;     (ein sr-speedbar yaml-mode virtualenv use-package-ensure-system-package swiper python-mode py-autopep8 processing-mode powerline platformio-mode paredit nyan-mode melpa-upstream-visit material-theme list-packages-ext irony-eldoc ini-mode helm go-play go-mode flycheck fireplace date-field company-arduino better-defaults base16-theme avy ac-clang ac-capf))))
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  )
 
 
