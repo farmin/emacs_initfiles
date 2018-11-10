@@ -14,7 +14,7 @@
 
 
 ;; Do not forget to install these packages
-;; apt or pip install jedi autopep8 flake8 ipython importmagic yapf 
+;; apt or pip install jedi autopep8 flake8 ipython importmagic yapf elpa-popup
 ;; 
 ;; Define list of packages to install
 (defvar myPackages
@@ -22,7 +22,10 @@
     material-theme
     exec-path-from-shell
     elpy
-    pyenv-mode))
+    pyenv-mode
+    yaml-mode
+    irony
+    ))
 
 ;; install all packages in list
 (mapc #'(lambda (package)
@@ -200,3 +203,17 @@
 ;;  )
 
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (yaml-mode pyenv-mode material-theme exec-path-from-shell elpy better-defaults))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
