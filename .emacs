@@ -13,6 +13,16 @@
 
 
 
+(setq
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist
+    '(("." . "~/.saves/"))    ; don't litter my fs tree
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t)       ; use versioned backups
+
+
 ;; Do not forget to install these packages
 ;; apt or pip install jedi autopep8 flake8 ipython importmagic yapf elpa-popup
 ;; 
@@ -20,9 +30,11 @@
 (defvar myPackages
   '(better-defaults
     use-package
+    el-get
     material-theme
     exec-path-from-shell
     ;;elpy
+    multiple-cursors
     pyenv-mode
     yaml-mode
     company
@@ -30,11 +42,18 @@
     company-irony
     rtags
     company-rtags
-    ;;flycheck-rtags
+    flycheck-rtags
     irony-eldoc
     ))
 
 
+
+;; Multiple cursors mode
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 ;; install all packages in list
 (mapc #'(lambda (package)
@@ -150,7 +169,61 @@
   (setq-local flycheck-highlighting-mode nil)
   (setq-local flycheck-check-syntax-automatically nil))
 
-;; ;; only run this if rtags is installed
+(require 'req-package)
+(req-package rtags
+  :config
+  (progn
+    (unless (rtags-executable-find "rc") (error "Binary rc is not installed!"))
+    (unless (rtags-executable-find "rdm") (error "Binary rdm is not installed!"))
+
+    (define-key c-mode-base-map (kbd "M-.") 'rtags-find-symbol-at-point)
+    (define-key c-mode-base-map (kbd "M-,") 'rtags-find-references-at-point)
+    (define-key c-mode-base-map (kbd "M-?") 'rtags-display-summary)
+    (rtags-enable-standard-keybindings)
+
+    (setq rtags-use-helm t)
+
+    ;; Shutdown rdm when leaving emacs.
+    (add-hook 'kill-emacs-hook 'rtags-quit-rdm)
+    ))
+
+;; TODO: Has no coloring! How can I get coloring?
+(req-package helm-rtags
+  :require helm rtags
+  :config
+  (progn
+    (setq rtags-display-result-backend 'helm)
+    ))
+
+;; Use rtags for auto-completion.
+(req-package company-rtags
+  :require company rtags
+  :config
+  (progn
+    (setq rtags-autostart-diagnostics t)
+    (rtags-diagnostics)
+    (setq rtags-completions-enabled t)
+    (push 'company-rtags company-backends)
+    ))
+
+;; Live code checking.
+(req-package flycheck-rtags
+  :require flycheck rtags
+  :config
+  (progn
+    ;; ensure that we use only rtags checking
+    ;; https://github.com/Andersbakken/rtags#optional-1
+    (defun setup-flycheck-rtags ()
+      (flycheck-select-checker 'rtags)
+      (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+      (setq-local flycheck-check-syntax-automatically nil)
+      (rtags-set-periodic-reparse-timeout 2.0)  ;; Run flycheck 2 seconds after being idle.
+      )
+    (add-hook 'c-mode-hook #'setup-flycheck-rtags)
+    (add-hook 'c++-mode-hook #'setup-flycheck-rtags)
+    ))
+
+;; ;;only run this if rtags is installed
 ;; (when (require 'rtags nil :noerror)
 ;;   ;; make sure you have company-mode installed
 ;;   (require 'company)
@@ -177,9 +250,9 @@
 ;;   ;; c-mode-common-hook is also called by c++-mode
 ;;   (add-hook 'c-mode-common-hook #'setup-flycheck-rtags))
 
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
+;; (add-hook 'c++-mode-hook 'irony-mode)
+;; (add-hook 'c-mode-hook 'irony-mode)
+;; (add-hook 'objc-mode-hook 'irony-mode)
 
 (defun my-irony-mode-hook ()
   (define-key irony-mode-map [remap completion-at-point]
@@ -318,7 +391,7 @@
  '(global-company-mode t)
  '(package-selected-packages
    (quote
-    (flycheck-rtags company-rtags company-shell markdown-mode yaml-mode use-package pyenv-mode material-theme irony-eldoc exec-path-from-shell elpy company-jedi company-irony-c-headers company-irony company-c-headers better-defaults))))
+    (sr-speedbar flycheck-clangcheck flycheck-irony py-autopep8 dockerfile-mode protobuf-mode multiple-cursors el-get req-package flycheck-rtags company-rtags company-shell markdown-mode yaml-mode use-package pyenv-mode material-theme irony-eldoc exec-path-from-shell elpy company-jedi company-irony-c-headers company-irony company-c-headers better-defaults))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
